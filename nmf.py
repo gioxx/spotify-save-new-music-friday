@@ -82,7 +82,7 @@ def get_playlistcover(access_token, nmfiplaylisttoday):
        "Authorization": "Bearer %s" % access_token
     }
     response = requests.get(url, headers=headers)
-    return response.json()[0]['url']
+    return response.json()[1]['url']
 
 def downloadart(arturl, filename):
     response = urllib.request.urlretrieve(arturl, filename)
