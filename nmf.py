@@ -82,18 +82,7 @@ def get_playlistcover(access_token, nmfiplaylisttoday):
        "Authorization": "Bearer %s" % access_token
     }
     response = requests.get(url, headers=headers)
-    print(response.json())
-    return response.json()[0]['url']
-
-def get_officialplaylistcover(access_token, playlistid):
-    url = "https://api.spotify.com/v1/playlists/%s/images" % playlistid
-    headers = {
-       "Content-Type": "application/json",
-       "Authorization": "Bearer %s" % access_token
-    }
-    response = requests.get(url, headers=headers)
-    print(response.json())
-    return response.json()[0]['url']    
+    return response.json()
 
 def downloadart(arturl, filename):
     response = urllib.request.urlretrieve(arturl, filename)
@@ -137,8 +126,7 @@ if len(tracks) > 10:
     if "snapshot_id" in response:
         print("Playlist backup complete!")
         nmf_spoticode = get_spoticode(nmfiplaylisttoday)
-        #nmf_cover = get_playlistcover(access_token, nmfiplaylisttoday)[0]['url']
-        nmf_cover = get_officialplaylistcover(access_token, NEW_MUSIC_FRIDAY_ID)
+        nmf_cover = get_playlistcover(access_token, NEW_MUSIC_FRIDAY_ID)[0]['url']
         downloadart(nmf_spoticode,"nmf_spoticode.png")
         downloadart(nmf_cover,"nmf_cover.png")
 
