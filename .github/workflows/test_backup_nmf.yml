@@ -27,13 +27,13 @@ jobs:
           NEW_MUSIC_FRIDAY_ID: ${{ secrets.NEW_MUSIC_FRIDAY_ID }}
           USER_ID: ${{ secrets.USER_ID }}
     
-      - name: Commit updated JSON
-        run: |
-          git config --local user.email "action@github.com"
-          git config --local user.name "GitHub Action"
-          git add json/${{ env.jsn }}
-          git commit -m "${{ env.jsn }} automatic update" -a
-      - name: Push updated JSON
-        uses: ad-m/github-push-action@master
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Commit updated JSON
+#       run: |
+#         git config --local user.email "action@github.com"
+#         git config --local user.name "GitHub Action"
+#         git add json/${{ env.jsn }}
+#         git commit -m "${{ env.jsn }} automatic update" -a
+#     - name: Push updated JSON
+#       uses: ad-m/github-push-action@master
+#       with:
+#         github_token: ${{ secrets.GITHUB_TOKEN }}
