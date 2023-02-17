@@ -1,8 +1,6 @@
 name: Backup New Music Friday TEST
 
 on:
-  schedule:
-  - cron: '00 8 * * 5'
   workflow_dispatch:
 
 jobs:

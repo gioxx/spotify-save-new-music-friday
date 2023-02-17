@@ -61,7 +61,7 @@ jobs:
       if: always() && (needs.execute-cron.result == 'failure')
       steps:
         - name: Sleep Action
-          uses: juliangruber/sleep-action@v1.0.1
+          uses: juliangruber/sleep-action@v2.0.0
           with:
             time: 10m
 
