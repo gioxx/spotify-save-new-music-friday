@@ -82,7 +82,7 @@ def get_playlistcover(access_token, nmfiplaylisttoday):
        "Authorization": "Bearer %s" % access_token
     }
     response = requests.get(url, headers=headers)
-    return response.json()
+    return response.json()[0]['url']
 
 def downloadart(arturl, filename):
     response = urllib.request.urlretrieve(arturl, filename)
@@ -126,7 +126,8 @@ if len(tracks) > 10:
     if "snapshot_id" in response:
         print("Playlist backup complete!")
         nmf_spoticode = get_spoticode(nmfiplaylisttoday)
-        nmf_cover =  get_playlistcover(access_token, nmfiplaylisttoday)[0]['url']
+        #nmf_cover = get_playlistcover(access_token, nmfiplaylisttoday)[0]['url']
+        nmf_cover = get_playlistcover(access_token, nmfiplaylisttoday)
         downloadart(nmf_spoticode,"nmf_spoticode.png")
         downloadart(nmf_cover,"nmf_cover.png")
 
