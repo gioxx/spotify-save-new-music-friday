@@ -78,11 +78,12 @@ def get_spoticode(nmfiplaylisttoday):
 def get_playlistcover(access_token, nmfiplaylisttoday):
     url = "https://api.spotify.com/v1/playlists/%s/images" % nmfiplaylisttoday
     headers = {
+       "Accept": "application/json",
        "Content-Type": "application/json",
        "Authorization": "Bearer %s" % access_token
     }
     response = requests.get(url, headers=headers)
-    return response.json()[1]['url']
+    return response.json()[0]['url']
 
 def downloadart(arturl, filename):
     response = urllib.request.urlretrieve(arturl, filename)
