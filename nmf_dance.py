@@ -106,8 +106,8 @@ access_token = refresh_access_token()['access_token']
 tracks =  get_playlist(access_token,NEW_MUSIC_FRIDAY_DANCE_ID)['tracks']['items']
 
 if len(tracks) > 10:
-    nmfplaylisttoday =  create_playlist(access_token)['id']
-    nmfplaylisttoday_info =  get_playlist(access_token,nmfplaylisttoday)
+    nmfplaylisttoday = create_playlist(access_token)['id']
+    nmfplaylisttoday_info = get_playlist(access_token,nmfplaylisttoday)
     tracklist = []
 
     try:
