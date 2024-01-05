@@ -8,17 +8,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.1
 
-      - name: Setup Python Environment
-        uses: actions/setup-python@v4
+      - name: 🐍 Setup Python Environment
+        uses: actions/setup-python@v5.0.0
         with:
-          python-version: 3.9
+          python-version: 3.10
 
-      - name: Install Requirements
+      - name: 💻 Install Requirements
         run: pip install -r requirements.txt
 
-      - name: Execute Python script
+      - name: 💾 Backup Playlist
         run: python nmf.py
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -27,7 +27,7 @@ jobs:
           NEW_MUSIC_FRIDAY_ID: ${{ secrets.NEW_MUSIC_FRIDAY_ID }}
           USER_ID: ${{ secrets.USER_ID }}
     
-#      - name: Commit updated JSON
+#      - name: 📝 Commit updated JSON
 #       run: |
 #         git config --local user.email "action@github.com"
 #         git config --local user.name "GitHub Action"

@@ -10,17 +10,17 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code	
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4.1.1
 
-      - name: Setup Python Environment
-        uses: actions/setup-python@v4
+      - name: 🐍 Setup Python Environment
+        uses: actions/setup-python@v5.0.0
         with:
-          python-version: 3.9
+          python-version: 3.10
 
-      - name: Install Requirements
+      - name: 💻 Install Requirements
         run: pip install -r requirements.txt
 
-      - name: Execute Python script
+      - name: 💾 Append songs in the main Playlist
         run: python main.py
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}
@@ -29,32 +29,32 @@ jobs:
           NEW_MUSIC_FRIDAY_ID: ${{ secrets.NEW_MUSIC_FRIDAY_ID }}
           SAVE_TO_ID: ${{ secrets.SAVE_TO_ID }}
 
-  run-if-failed:
-      runs-on: ubuntu-latest
-      needs: [execute-cron]
-      if: always() && (needs.execute-cron.result == 'failure')
-      steps:
-        - name: Sleep Action
-          uses: juliangruber/sleep-action@v1.0.1
-          with:
-            time: 10m
+  # run-if-failed:
+  #     runs-on: ubuntu-latest
+  #     needs: [execute-cron]
+  #     if: always() && (needs.execute-cron.result == 'failure')
+  #     steps:
+  #       - name: Sleep Action
+  #         uses: juliangruber/sleep-action@v1.0.1
+  #         with:
+  #           time: 10m
 
-        - name: Checkout Code
-          uses: actions/checkout@v3
+  #       - name: Checkout Code
+  #         uses: actions/checkout@v4.1.1
 
-        - name: Setup Python Environment
-          uses: actions/setup-python@v4
-          with:
-            python-version: 3.9
+  #       - name: 🐍 Setup Python Environment
+  #         uses: actions/setup-python@v5.0.0
+  #         with:
+  #           python-version: 3.10
 
-        - name: Install Requirements
-          run: pip install -r requirements.txt
+  #       - name: 💻 Install Requirements
+  #         run: pip install -r requirements.txt
 
-        - name: Execute Python script
-          run: python main.py
-          env:
-            CLIENT_ID: ${{ secrets.CLIENT_ID }}
-            CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
-            REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
-            NEW_MUSIC_FRIDAY_ID: ${{ secrets.NEW_MUSIC_FRIDAY_ID }}
-            USER_ID: ${{ secrets.USER_ID }}
+  #       - name: 💾 Append songs in the main Playlist
+  #         run: python main.py
+  #         env:
+  #           CLIENT_ID: ${{ secrets.CLIENT_ID }}
+  #           CLIENT_SECRET: ${{ secrets.CLIENT_SECRET }}
+  #           REFRESH_TOKEN: ${{ secrets.REFRESH_TOKEN }}
+  #           NEW_MUSIC_FRIDAY_ID: ${{ secrets.NEW_MUSIC_FRIDAY_ID }}
+  #           USER_ID: ${{ secrets.USER_ID }}
