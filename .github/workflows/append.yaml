@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  execute-cron:
+  New-Music-Friday-Append:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code	
@@ -20,7 +20,7 @@ jobs:
       - name: 💻 Install Requirements
         run: pip install -r requirements.txt
 
-      - name: 💾 Append songs in the main Playlist
+      - name: 💾 Adding songs to the Main Playlist
         run: python main.py
         env:
           CLIENT_ID: ${{ secrets.CLIENT_ID }}

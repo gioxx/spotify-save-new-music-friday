@@ -6,7 +6,7 @@ on:
   workflow_dispatch:
 
 jobs:
-  execute-cron:
+  New-Music-Friday-Dance-Backup:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Code
