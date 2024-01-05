@@ -15,7 +15,7 @@ jobs:
       - name: 🐍 Setup Python Environment
         uses: actions/setup-python@v5.0.0
         with:
-          python-version: 3.10
+          python-version: 3.12.0
 
       - name: 💻 Install Requirements
         run: pip install -r requirements.txt
@@ -56,7 +56,7 @@ jobs:
   #       - name: 🐍 Setup Python Environment
   #         uses: actions/setup-python@v5.0.0
   #         with:
-  #           python-version: 3.10
+  #           python-version: 3.12.0
 
   #       - name: 💻 Install Requirements
   #         run: pip install -r requirements.txt
