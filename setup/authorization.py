@@ -1,52 +1,108 @@
-import urllib.parse
-from urllib.parse import parse_qs
-from dotenv import load_dotenv, find_dotenv
-import requests
-import base64
 import os
+import base64
+import requests
+from dotenv import load_dotenv
+from http.server import HTTPServer, BaseHTTPRequestHandler
+import webbrowser
 
-load_dotenv(find_dotenv())
-CLIENT_ID = os.environ.get("CLIENT_ID")
-CLIENT_SECRET = os.environ.get("CLIENT_SECRET")
-REDIRECT_URI = os.environ.get("REDIRECT_URI")
+# Load the .env file
+load_dotenv()
 
-OAUTH_AUTHORIZE_URL = "https://accounts.spotify.com/authorize"
-OAUTH_TOKEN_URL = "https://accounts.spotify.com/api/token"
-SCOPE = "user-library-read playlist-modify-public playlist-modify-private playlist-read-private playlist-read-collaborative"
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+REDIRECT_URI = "http://localhost:8888/callback"  # You can change this, but it must be registered in the Spotify app
+SCOPES = "playlist-modify-public playlist-modify-private"
 
-def get_auth_url():
-    payload = {
+if not CLIENT_ID or not CLIENT_SECRET:
+    print("CLIENT_ID or CLIENT_SECRET not found in the .env file")
+    exit(1)
+
+# Authorization URL
+AUTH_URL = "https://accounts.spotify.com/authorize"
+TOKEN_URL = "https://accounts.spotify.com/api/token"
+
+# Global variable for the authorization code
+auth_code = None
+
+
+class OAuthServerHandler(BaseHTTPRequestHandler):
+    """Handler to capture the Spotify authorization code."""
+    def do_GET(self):
+        global auth_code
+        if "/callback" in self.path:
+            query = self.path.split("?")[1]
+            params = {key: value for key, value in (p.split("=") for p in query.split("&"))}
+            auth_code = params.get("code")
+            self.send_response(200)
+            self.end_headers()
+            self.wfile.write(b"Authorization successful. You can close this window.")
+        else:
+            self.send_response(404)
+            self.end_headers()
+
+
+def start_server():
+    """Start an HTTP server to capture the authorization code."""
+    server = HTTPServer(("localhost", 8888), OAuthServerHandler)
+    print("Server waiting for the authorization code...")
+    server.handle_request()
+    return auth_code
+
+
+def get_authorization_code():
+    """Get the authorization code by opening the browser."""
+    params = {
         "client_id": CLIENT_ID,
         "response_type": "code",
         "redirect_uri": REDIRECT_URI,
-        "scope": SCOPE
+        "scope": SCOPES,
     }
-    urlparams = urllib.parse.urlencode(payload)
-    return ("%s?%s" % (OAUTH_AUTHORIZE_URL, urlparams))
+    auth_request_url = f"{AUTH_URL}?{'&'.join(f'{k}={v}' for k, v in params.items())}"
+    webbrowser.open(auth_request_url)
+    return start_server()
 
-def get_refresh_token(code):
+
+def get_refresh_token(auth_code):
+    """Exchange the authorization code for an access token and a refresh token."""
+    client_creds = f"{CLIENT_ID}:{CLIENT_SECRET}"
+    encoded_creds = base64.b64encode(client_creds.encode()).decode()
+
+    headers = {
+        "Authorization": f"Basic {encoded_creds}",
+        "Content-Type": "application/x-www-form-urlencoded",
+    }
     payload = {
         "grant_type": "authorization_code",
-        "code": code,
-        "redirect_uri": REDIRECT_URI
+        "code": auth_code,
+        "redirect_uri": REDIRECT_URI,
     }
-    encoded_client = base64.b64encode((CLIENT_ID + ":" + CLIENT_SECRET).encode('ascii'))
-    headers = {"Authorization": "Basic %s" % encoded_client.decode('ascii')}
-    response = requests.post(OAUTH_TOKEN_URL, data=payload, headers=headers)
-    return response.json()['refresh_token']
 
-def authorization():
-    if CLIENT_ID is None or CLIENT_SECRET is None or REDIRECT_URI is None:
-        print("Environment variables have not been loaded!")
-        return
+    response = requests.post(TOKEN_URL, data=payload, headers=headers)
+    if response.status_code == 200:
+        token_data = response.json()
+        print("Access Token:", token_data.get("access_token"))
+        print("Refresh Token:", token_data.get("refresh_token"))
+        return token_data.get("refresh_token")
+    else:
+        print("Error during the token exchange process.")
+        print(response.status_code, response.reason)
+        print(response.json())
+        return None
 
-    print("Open this link in your browser: %s \n" % get_auth_url() )
 
-    redirected_url = input("Enter URL you was redirected to (after accepting authorization): ")
-    parsed_url = urllib.parse.urlparse(redirected_url)
-    code = parse_qs(parsed_url.query)['code'][0]
+if __name__ == "__main__":
+    print("Step 1: Get the authorization code...")
+    auth_code = get_authorization_code()
 
-    refresh_token = get_refresh_token(code)
-    print("\n Your refresh token is: %s" % refresh_token)
+    if not auth_code:
+        print("Error: Unable to get the authorization code.")
+        exit(1)
 
-authorization()
+    print("Step 2: Exchange the authorization code for a refresh token...")
+    refresh_token = get_refresh_token(auth_code)
+
+    if refresh_token:
+        print("\nOperation completed!")
+        print(f"Save your REFRESH_TOKEN in the .env file:\nREFRESH_TOKEN={refresh_token}")
+    else:
+        print("Error: Unable to get the refresh token.")
