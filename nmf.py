@@ -32,16 +32,22 @@ def refresh_access_token():
         "Authorization": "Basic %s" % encoded_client.decode('ascii')
     }
     response = requests.post(OAUTH_TOKEN_URL, data=payload, headers=headers)
-    return response.json()
+    response_json = response.json()
+    # print("Response from Spotify API:", response_json)
+    if 'access_token' not in response_json:
+        print("Error: 'access_token' key not found.")
+        print("Response content:", response_json)
+        sys.exit(1)
+    return response_json
 
-
-def get_playlist(access_token,playlistid):
+def get_playlist(access_token, playlistid):
     url = "https://api.spotify.com/v1/playlists/%s" % playlistid
     headers = {
-       "Content-Type": "application/json",
-       "Authorization": "Bearer %s" % access_token
+        "Content-Type": "application/json",
+        "Authorization": "Bearer %s" % access_token
     }
     response = requests.get(url, headers=headers)
+    print("Response from Spotify API:", response.json())
     return response.json()
 
 def create_playlist(access_token):
