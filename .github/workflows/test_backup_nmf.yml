@@ -1,5 +1,8 @@
 name: Backup New Music Friday TEST
 
+permissions:
+  contents: read
+
 on:
   workflow_dispatch:
 
